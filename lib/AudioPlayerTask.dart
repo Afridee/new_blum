@@ -92,7 +92,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
         artist: params['data'][0]['artist'],
         duration: Duration(milliseconds: params['data'][0]['duration']),
         artUri: Uri.https(params['data'][0]['artUri'][0],params['data'][0]['artUri'][1]),
-      ),
+      ),//
     ];
 
 
