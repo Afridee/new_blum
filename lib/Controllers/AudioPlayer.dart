@@ -3,7 +3,6 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
 import '../Models/songModelForPlaylist.dart';
@@ -12,8 +11,6 @@ import 'package:blum/main.dart';
 
 
 class AudioPlayerController extends GetxController{
-
-
 
   ///Audio querying:
   AudioQuerying audioQuerying = Get.put(AudioQuerying());
@@ -24,12 +21,6 @@ class AudioPlayerController extends GetxController{
   ///Represents list of currentsongs:
   List<SongModelForPLayList> currentSongList = new List<SongModelForPLayList>();
 
-  ///Stream that gives the index of current song:
-  StreamSubscription streamOfCurrentSong;
-
-  ///Stream that gives the index of current song:
-  StreamSubscription playerdurationStream;
-
   ///CurrentSongDuration:
   String currentSongDuration = "00:00:00";
 
@@ -39,17 +30,14 @@ class AudioPlayerController extends GetxController{
   ///Stream that gives the index of current song:
   StreamSubscription playerpositionStream;
 
-  ///Stream that tells loopmode:
-  StreamSubscription loopModeStream;
+  StreamSubscription playbackStateStream;
+
+  StreamSubscription currentMediaItemStream;
 
   ///the current song that is being played:
   SongModelForPLayList currentSong = new SongModelForPLayList();
 
   AnimationController playPauseAnimationController;
-
-  final Box<String> AlbumArtworkBox = Hive.box<String>("AlbumArtworkBox");
-
-
 
   ///A function to change milliseconds into hh:mm:ss
   changeMillisecondsToTime(Duration d) => d.toString().split('.').first.padLeft(8, "0");
@@ -73,20 +61,24 @@ class AudioPlayerController extends GetxController{
   ///A function that initializes all the stream:
   initializeStreams() async{
 
-    AudioService.playbackStateStream.listen((state) {
+    playbackStateStream = AudioService.playbackStateStream.listen((state) {
       state.playing ? playPauseAnimationController.forward() : playPauseAnimationController.reverse();
       print('shuffleMode: ');
       print(state.shuffleMode.index);
     });
 
 
-    AudioService.currentMediaItemStream.listen((MediaItem item) {
+    currentMediaItemStream = AudioService.currentMediaItemStream.listen((MediaItem item) {
       currentSongDuration = changeMillisecondsToTime(item.duration);
+      currentSongList.forEach((element) {
+        if(element.filePath==item.id){
+          currentSong = element;
+        }
+      });
       update();
     });
 
     playerpositionStream = AudioService.positionStream.listen((event) {
-
       currentSongPosition = changeMillisecondsToTime(event);
       try {
         double _dragPercentage = (event.inMilliseconds / AudioService.currentMediaItem.duration.inMilliseconds) * 100;
@@ -99,12 +91,6 @@ class AudioPlayerController extends GetxController{
       } catch (e) {
         print(e);
       }
-    });
-
-
-    streamOfCurrentSong = player.currentIndexStream.listen((event) {
-       currentSong = currentSongList[event];
-       update();
     });
 
   }
@@ -148,6 +134,8 @@ class AudioPlayerController extends GetxController{
   ///Sets Audio source(for songs):
   setAudioSourceForSongs({SongInfo song}) async{
 
+    await AudioService.stop();
+
     int startFromIndex = audioQuerying.songs.indexOf(song);
 
     final Box<String> AlbumArtworkBox = Hive.box<String>("AlbumArtworkBox");
@@ -175,12 +163,6 @@ class AudioPlayerController extends GetxController{
     });
 
     update();
-    //
-    List<AudioSource> sourceChildren = new List<AudioSource>();
-
-    currentSongList.forEach((element) {
-      sourceChildren.add(AudioSource.uri(Uri.parse(element.filePath)));
-    });
 
     List v = [];
 
@@ -208,7 +190,6 @@ class AudioPlayerController extends GetxController{
       androidNotificationIcon: 'mipmap/ic_launcher',
       androidEnableQueue: true,
     );
-
   }
 
   ///loopToggling:
@@ -222,11 +203,6 @@ class AudioPlayerController extends GetxController{
     else if(AudioService.playbackState.repeatMode == AudioServiceRepeatMode.one){
       await AudioService.setRepeatMode(AudioServiceRepeatMode.none);
     }
-  }
-
-  ///Shuffle Mode Toggling:
-  shuffleToggle() async{
-    await player.setShuffleModeEnabled(!player.shuffleModeEnabled);
   }
 
 }

@@ -72,12 +72,8 @@ class AudioPlayerTask extends BackgroundAudioTask {
               ),//
             );
           });
-      print('here:');
-      print(items);
     } catch (e) {
-      print('here:');
-      print(items);
-      print(e);
+
     }
 
 

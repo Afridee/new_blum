@@ -279,7 +279,7 @@ class _AudioPlayerState extends State<AudioPlayer>
               bottom: 0,
               child: GetBuilder<AudioPlayerController>(
                 builder: (apc) {
-                  return player.playing
+                  return AudioService.playbackState.playing
                       ? Container(
                           height: 60,
                           width: MediaQuery.of(context).size.width,
