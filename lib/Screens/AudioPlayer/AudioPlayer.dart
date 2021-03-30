@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:audio_service/audio_service.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -201,9 +202,13 @@ class _AudioPlayerState extends State<AudioPlayer>
                                return IconButton(
                                  iconSize: 20,
                                  icon: Icon(Icons.shuffle),
-                                 color: apc.shuffled? Color(0xff6F2CFF) : Colors.white,
+                                 color: AudioService.playbackState.shuffleMode == AudioServiceShuffleMode.all? Color(0xff6F2CFF) : Colors.white,
                                  onPressed: () {
-                                   audioPlayerController.shuffleToggle();
+                                   if(AudioService.playbackState.shuffleMode == AudioServiceShuffleMode.none){
+                                     AudioService.setShuffleMode(AudioServiceShuffleMode.all);
+                                   }else if(AudioService.playbackState.shuffleMode == AudioServiceShuffleMode.all){
+                                     AudioService.setShuffleMode(AudioServiceShuffleMode.none);
+                                   }
                                  },
                                );
                              }),
@@ -212,7 +217,7 @@ class _AudioPlayerState extends State<AudioPlayer>
                               iconSize: 40,
                               color: Colors.white.withOpacity(0.7),
                               onPressed: () async{
-                                await player.seekToPrevious();
+                                await AudioService.skipToPrevious();
                               },
                             ),
                             Container(
@@ -249,13 +254,13 @@ class _AudioPlayerState extends State<AudioPlayer>
                               iconSize: 40,
                               color: Colors.white.withOpacity(0.7),
                               onPressed: () async{
-                                await player.seekToNext();
+                                await AudioService.skipToNext();
                               },
                             ),
                             GetBuilder<AudioPlayerController>(builder: (apc){
                               return IconButton(
-                                icon: apc.loopMode==LoopMode.all || apc.loopMode==LoopMode.off ? Icon(Icons.repeat) : Icon(Icons.repeat_one),
-                                color: apc.loopMode==LoopMode.off ? Colors.white : Color(0xff6F2CFF),
+                                icon: AudioService.playbackState.repeatMode == AudioServiceRepeatMode.all || AudioService.playbackState.repeatMode == AudioServiceRepeatMode.none ? Icon(Icons.repeat) : Icon(Icons.repeat_one),
+                                color: AudioService.playbackState.repeatMode == AudioServiceRepeatMode.none ? Colors.white : Color(0xff6F2CFF),
                                 iconSize: 20,
                                 onPressed: () {
                                   audioPlayerController.loopToggle();

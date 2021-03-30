@@ -26,10 +26,10 @@ class SongListTile extends StatelessWidget {
       onTap: (){
         // print('filepath: '+songInfo.filePath);
         audioPlayerController.setAudioSourceForSongs(song: songInfo);
-        // var route = new MaterialPageRoute(
-        //   builder: (BuildContext context) => new AudioPlayer(),
-        // );
-        // Navigator.of(context).push(route);
+        var route = new MaterialPageRoute(
+          builder: (BuildContext context) => new AudioPlayer(),
+        );
+        Navigator.of(context).push(route);
       },
       child: ListTile(
         leading: Container(

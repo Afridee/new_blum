@@ -41,37 +41,8 @@ class Seeker {
 }
 
 
-/// Provides access to a library of media items. In your app, this could come
-/// from a database or web service.
-class MediaLibrary{
-
-  List<MediaItem> _items = <MediaItem>[
-    MediaItem(
-      id: "/storage/emulated/0/Music/Alec Benjamin - Narrated For You (2018) Mp3 Album 320kbps Quality [PMEDIA]/12. 1994.mp3",
-      album: "Science Friday",
-      title: "A Salute To Head-Scratching Science",
-      artist: "Science Friday and WNYC Studios",
-      duration: Duration(milliseconds: 5739820),
-      artUri: Uri.https('media.wnyc.org','/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg'),
-    ),
-    MediaItem(
-      id: "/storage/emulated/0/Music/Alec Benjamin - Narrated For You (2018) Mp3 Album 320kbps Quality [PMEDIA]/12. 1994.mp3",
-      album: "Science Friday",
-      title: "From Cat Rheology To Operatic Incompetence",
-      artist: "Science Friday and WNYC Studios",
-      duration: Duration(milliseconds: 2856950),
-      artUri: Uri.https('media.wnyc.org','/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg'),
-    ),
-  ];
-
-
-  List<MediaItem> get items => _items;
-}
-
-
 /// This task defines logic for playing a list of podcast episodes.
 class AudioPlayerTask extends BackgroundAudioTask {
-  final _mediaLibrary = MediaLibrary();
   AudioProcessingState _skipState;
   Seeker _seeker;
   StreamSubscription<PlaybackEvent> _eventSubscription;
@@ -84,16 +55,30 @@ class AudioPlayerTask extends BackgroundAudioTask {
   @override
   Future<void> onStart(Map<String, dynamic> params) async {
 
-    List<MediaItem> items = <MediaItem>[
-      MediaItem(
-        id: params['data'][0]['id'],
-        album: params['data'][0]['album'],
-        title: params['data'][0]['title'],
-        artist: params['data'][0]['artist'],
-        duration: Duration(milliseconds: params['data'][0]['duration']),
-        artUri: Uri.https(params['data'][0]['artUri'][0],params['data'][0]['artUri'][1]),
-      ),//
-    ];
+
+
+    List<MediaItem> items = [];
+
+    try {
+      params['data'].forEach((element){
+            items.add(
+              MediaItem(
+                id: element['id'],
+                album: element['album'],
+                title: element['title'],
+                artist: element['artist'],
+                duration: Duration(milliseconds: element['duration']),
+                artUri: Uri.https(element['artUri'][0],element['artUri'][1]),
+              ),//
+            );
+          });
+      print('here:');
+      print(items);
+    } catch (e) {
+      print('here:');
+      print(items);
+      print(e);
+    }
 
 
 
@@ -137,16 +122,36 @@ class AudioPlayerTask extends BackgroundAudioTask {
     // Load and broadcast the queue
     AudioServiceBackground.setQueue(queue);
     try {
-      await player.setAudioSource(ConcatenatingAudioSource(
-        children:
-        queue.map((item) => AudioSource.uri(Uri.parse(item.id))).toList(),
-      ));
+      await player.setAudioSource(
+        ConcatenatingAudioSource(
+          // Start loading next item just before reaching it.
+          useLazyPreparation: true, // default
+          // Customise the shuffle algorithm.
+          shuffleOrder: DefaultShuffleOrder(), // default
+          // Specify the items in the playlist.
+          children: queue.map((item) => AudioSource.uri(Uri.parse(item.id))).toList(),
+        ),
+        // Playback will be prepared to start from track1.mp3
+        initialIndex: params['startFromIndex'], // default
+        // Playback will be prepared to start from position zero.
+        initialPosition: Duration.zero, // default
+      );
       // In this example, we automatically start playing on start.
       onPlay();
     } catch (e) {
       print("Error: $e");
       onStop();
     }
+  }
+
+  @override
+  Future<void> onSkipToNext() async {
+    await player.seekToNext();
+  }
+
+  @override
+  Future<void> onSkipToPrevious() async{
+    await player.seekToPrevious();
   }
 
   @override
@@ -203,6 +208,35 @@ class AudioPlayerTask extends BackgroundAudioTask {
     await super.onStop();
   }
 
+  @override
+  Future<void> onSetShuffleMode(AudioServiceShuffleMode shuffleMode) async{
+
+    try {
+      await player.setShuffleModeEnabled(!player.shuffleModeEnabled);
+      print('here shuffle w e:');
+    } catch (e) {
+      print('here shuffle:');
+      print(e);
+    }
+
+    await _broadcastState();
+  }
+
+  @override
+  Future<void> onSetRepeatMode(AudioServiceRepeatMode repeatMode) async {
+    if(repeatMode == AudioServiceRepeatMode.all){
+      player.setLoopMode(LoopMode.all);
+    }
+    else if(repeatMode == AudioServiceRepeatMode.one){
+      player.setLoopMode(LoopMode.one);
+    }
+    else if(repeatMode == AudioServiceRepeatMode.none){
+      player.setLoopMode(LoopMode.off);
+    }
+
+    _broadcastState();
+  }
+
   /// Jumps away from the current position by [offset].
   Future<void> _seekRelative(Duration offset) async {
     var newPosition = player.position + offset;
@@ -238,13 +272,17 @@ class AudioPlayerTask extends BackgroundAudioTask {
         MediaAction.seekTo,
         MediaAction.seekForward,
         MediaAction.seekBackward,
+        MediaAction.setShuffleMode,
+        MediaAction.setRepeatMode
       ],
       androidCompactActions: [0, 1, 3],
       processingState: _getProcessingState(),
       playing: player.playing,
       position: player.position,
       bufferedPosition: player.bufferedPosition,
+      shuffleMode: _getShuffleMode(),
       speed: player.speed,
+      repeatMode: _getRepeatModeStat()
     );
   }
 
@@ -267,4 +305,25 @@ class AudioPlayerTask extends BackgroundAudioTask {
         throw Exception("Invalid state: ${player.processingState}");
     }
   }
+
+  AudioServiceShuffleMode _getShuffleMode(){
+    if(player.shuffleModeEnabled){
+      return AudioServiceShuffleMode.all;
+    }else{
+      return AudioServiceShuffleMode.none;
+    }
+  }
+
+  AudioServiceRepeatMode _getRepeatModeStat(){
+    if(player.loopMode == LoopMode.all){
+      return AudioServiceRepeatMode.all;
+    }
+    else if(player.loopMode == LoopMode.one){
+      return AudioServiceRepeatMode.one;
+    }
+    if(player.loopMode == LoopMode.off){
+      return AudioServiceRepeatMode.none;
+    }
+  }
+
 }
