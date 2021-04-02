@@ -139,7 +139,6 @@ class AudioPlayerController extends GetxController{
           'title': element.title,
           'artist': element.artist,
           'duration': int.parse(element.duration),
-          'artUri': ['media.wnyc.org','/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg'],
         });
       });
 
@@ -219,7 +218,6 @@ class AudioPlayerController extends GetxController{
               'title': element.title,
               'artist': element.artist,
               'duration': int.parse(element.duration),
-              'artUri': ['media.wnyc.org','/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg'],
             });
           });
 

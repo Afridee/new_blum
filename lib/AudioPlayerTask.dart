@@ -62,7 +62,6 @@ class AudioPlayerTask extends BackgroundAudioTask {
                 title: element['title'],
                 artist: element['artist'],
                 duration: Duration(milliseconds: element['duration']),
-                artUri: Uri.https(element['artUri'][0],element['artUri'][1]),
               ),//
             );
           });
