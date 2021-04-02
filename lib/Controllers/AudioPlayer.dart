@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-import 'package:just_audio/just_audio.dart';
 import '../Models/songModelForPlaylist.dart';
 import 'AudioQuerying.dart';
 import 'package:blum/main.dart';
@@ -43,6 +42,7 @@ class AudioPlayerController extends GetxController{
   changeMillisecondsToTime(Duration d) => d.toString().split('.').first.padLeft(8, "0");
 
 
+
   ///playPauseToggle:
   playPauseToggle(){
     AudioService.playbackState.playing ? AudioService.pause() : AudioService.play();
@@ -53,7 +53,7 @@ class AudioPlayerController extends GetxController{
   changeDragPercantage(double current){
     dragPercentage = current;
     AudioService.seekTo(Duration(milliseconds: ((AudioService.currentMediaItem.duration.inMilliseconds/100)*current).toInt()));
-    //player.seek();
+
     update();
   }
 
@@ -62,20 +62,27 @@ class AudioPlayerController extends GetxController{
   initializeStreams() async{
 
     playbackStateStream = AudioService.playbackStateStream.listen((state) {
-      state.playing ? playPauseAnimationController.forward() : playPauseAnimationController.reverse();
-      print('shuffleMode: ');
-      print(state.shuffleMode.index);
+      try {
+        state.playing ? playPauseAnimationController.forward() : playPauseAnimationController.reverse();
+
+      } catch (e) {
+
+      }
     });
 
 
     currentMediaItemStream = AudioService.currentMediaItemStream.listen((MediaItem item) {
-      currentSongDuration = changeMillisecondsToTime(item.duration);
-      currentSongList.forEach((element) {
-        if(element.filePath==item.id){
-          currentSong = element;
-        }
-      });
-      update();
+      try {
+        currentSongDuration = changeMillisecondsToTime(item.duration);
+        currentSongList.forEach((element) {
+                if(element.filePath==item.id){
+                  currentSong = element;
+                }
+              });
+        update();
+      } catch (e) {
+
+      }
     });
 
     playerpositionStream = AudioService.positionStream.listen((event) {
@@ -89,7 +96,7 @@ class AudioPlayerController extends GetxController{
         }
         update();
       } catch (e) {
-        print(e);
+
       }
     });
 
@@ -106,90 +113,132 @@ class AudioPlayerController extends GetxController{
 
     update();
 
-    List<AudioSource> sourceChildren = new List<AudioSource>();
+    bool mediasAreStillSame = true;
 
-    currentSongList.forEach((element) {
-      sourceChildren.add(AudioSource.uri(Uri.parse(element.filePath)));
-    });
 
-    await player.setAudioSource(
-      ConcatenatingAudioSource(
-        // Start loading next item just before reaching it.
-        useLazyPreparation: true, // default
-        // Customise the shuffle algorithm.
-        shuffleOrder: DefaultShuffleOrder(), // default
-        // Specify the items in the playlist.
-        children: sourceChildren,
-      ),
-      // Playback will be prepared to start from track1.mp3
-      //initialIndex: index, // default
-      // Playback will be prepared to start from position zero.
-      initialPosition: Duration.zero, // default
-    );
+    if(AudioService.running && AudioService.queue.length==currentSongList.length){
+      for(int i=0;i<AudioService.queue.length;i++){
+        if(AudioService.queue[i].id != currentSongList[i].filePath){
+          mediasAreStillSame = false;
+        }
+      }
+    }else{
+      mediasAreStillSame = false;
+    }
 
-    player.play();
+    if(mediasAreStillSame){
+      AudioService.skipToQueueItem(currentSongList[index].filePath);
+    }else{
+
+      List playThese = [];
+
+      currentSongList.forEach((element) {
+        playThese.add({
+          'id': element.filePath,
+          'album': element.album,
+          'title': element.title,
+          'artist': element.artist,
+          'duration': int.parse(element.duration),
+          'artUri': ['media.wnyc.org','/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg'],
+        });
+      });
+
+      if(AudioService.running){
+        await AudioService.stop();
+      }
+
+      AudioService.start(
+        params: {'data': playThese, 'startFromIndex' : index},
+        backgroundTaskEntrypoint: audioPlayerTaskEntrypoint,
+        androidNotificationChannelName: 'Audio Service Demo',
+        // Enable this if you want the Android service to exit the foreground state on pause.
+        //androidStopForegroundOnPause: true,
+        androidNotificationColor: 0xFF2196f3,
+        androidNotificationIcon: 'mipmap/ic_launcher',
+        androidEnableQueue: true,
+      );
+    }
 
   }
 
   ///Sets Audio source(for songs):
   setAudioSourceForSongs({SongInfo song}) async{
 
-    await AudioService.stop();
+        int startFromIndex = audioQuerying.songs.indexOf(song);
 
-    int startFromIndex = audioQuerying.songs.indexOf(song);
+        final Box<String> AlbumArtworkBox = Hive.box<String>("AlbumArtworkBox");
 
-    final Box<String> AlbumArtworkBox = Hive.box<String>("AlbumArtworkBox");
+        currentSongList.clear();
 
-    currentSongList.clear();
+        audioQuerying.songs.forEach((songInfo) {
+          if(songInfo.duration!=null){
+            currentSongList.add(
+                SongModelForPLayList(
+                    album: songInfo.album,
+                    albumArtwork: AlbumArtworkBox.get(songInfo.album),
+                    title: songInfo.title,
+                    artist: songInfo.artist,
+                    duration: songInfo.duration,
+                    composer: songInfo.composer,
+                    albumId: songInfo.albumId,
+                    artistId: songInfo.artistId,
+                    filePath: songInfo.filePath,
+                    fileSize: songInfo.fileSize,
+                    isMusic: songInfo.isMusic
+                )
+            );
+          }
+        });
 
-    audioQuerying.songs.forEach((songInfo) {
-       if(songInfo.duration!=null){
-         currentSongList.add(
-             SongModelForPLayList(
-                 album: songInfo.album,
-                 albumArtwork: AlbumArtworkBox.get(songInfo.album),
-                 title: songInfo.title,
-                 artist: songInfo.artist,
-                 duration: songInfo.duration,
-                 composer: songInfo.composer,
-                 albumId: songInfo.albumId,
-                 artistId: songInfo.artistId,
-                 filePath: songInfo.filePath,
-                 fileSize: songInfo.fileSize,
-                 isMusic: songInfo.isMusic
-             )
-         );
-       }
-    });
+        update();
 
-    update();
-
-    List v = [];
-
-    currentSongList.forEach((element) {
-         v.add({
-           'id': element.filePath,
-           'album': element.album,
-           'title': element.title,
-           'artist': element.artist,
-           'duration': int.parse(element.duration),
-           'artUri': ['media.wnyc.org','/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg'],
-         });
-    });
+        bool mediasAreStillSame = true;
 
 
 
+        if(AudioService.running && AudioService.queue.length==currentSongList.length){
+          for(int i=0;i<AudioService.queue.length;i++){
+            if(AudioService.queue[i].id != currentSongList[i].filePath){
+              mediasAreStillSame = false;
+            }
+          }
+        }else{
+          mediasAreStillSame = false;
+        }
 
-    AudioService.start(
-      params: {'data': v, 'startFromIndex' : startFromIndex},
-      backgroundTaskEntrypoint: audioPlayerTaskEntrypoint,
-      androidNotificationChannelName: 'Audio Service Demo',
-      // Enable this if you want the Android service to exit the foreground state on pause.
-      //androidStopForegroundOnPause: true,
-      androidNotificationColor: 0xFF2196f3,
-      androidNotificationIcon: 'mipmap/ic_launcher',
-      androidEnableQueue: true,
-    );
+        if(mediasAreStillSame){
+          AudioService.skipToQueueItem(song.filePath);
+        }else{
+
+          List playThese = [];
+
+          currentSongList.forEach((element) {
+            playThese.add({
+              'id': element.filePath,
+              'album': element.album,
+              'title': element.title,
+              'artist': element.artist,
+              'duration': int.parse(element.duration),
+              'artUri': ['media.wnyc.org','/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg'],
+            });
+          });
+
+          if(AudioService.running){
+            await AudioService.stop();
+          }
+
+          AudioService.start(
+            params: {'data': playThese, 'startFromIndex' : startFromIndex},
+            backgroundTaskEntrypoint: audioPlayerTaskEntrypoint,
+            androidNotificationChannelName: 'Audio Service Demo',
+            // Enable this if you want the Android service to exit the foreground state on pause.
+            //androidStopForegroundOnPause: true,
+            androidNotificationColor: 0xFF2196f3,
+            androidNotificationIcon: 'mipmap/ic_launcher',
+            androidEnableQueue: true,
+          );
+        }
+
   }
 
   ///loopToggling:

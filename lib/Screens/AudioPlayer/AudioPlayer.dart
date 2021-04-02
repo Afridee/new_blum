@@ -6,10 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:blum/Controllers/AudioPlayer.dart';
 import '../../constants.dart';
-import 'package:blum/main.dart';
 
 class AudioPlayer extends StatefulWidget {
   @override

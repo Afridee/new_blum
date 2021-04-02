@@ -1,13 +1,7 @@
 import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 import 'main.dart';
 
 class Seeker {
@@ -135,7 +129,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
       // In this example, we automatically start playing on start.
       onPlay();
     } catch (e) {
-      print("Error: $e");
+      //print("Error: $e");
       onStop();
     }
   }
@@ -162,7 +156,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
     // previous. This variable holds the preferred state to send instead of
     // buffering during a skip, and it is cleared as soon as the player exits
     // buffering (see the listener in onStart).
-    _skipState = newIndex > index
+    _skipState = newIndex > player.currentIndex
         ? AudioProcessingState.skippingToNext
         : AudioProcessingState.skippingToPrevious;
     // This jumps to the beginning of the queue item at newIndex.
@@ -209,10 +203,10 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
     try {
       await player.setShuffleModeEnabled(!player.shuffleModeEnabled);
-      print('here shuffle w e:');
+      //print('here shuffle w e:');
     } catch (e) {
-      print('here shuffle:');
-      print(e);
+      //print('here shuffle:');
+      //print(e);
     }
 
     await _broadcastState();
