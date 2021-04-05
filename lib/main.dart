@@ -8,8 +8,7 @@ import 'dart:io';
 import 'AudioPlayerTask.dart';
 import 'Screens/Home.dart';
 
-///initializing Audioplayer:
-final AudioPlayer player = AudioPlayer();
+
 
 // NOTE: Your entrypoint MUST be a top-level function.
 void audioPlayerTaskEntrypoint() async {

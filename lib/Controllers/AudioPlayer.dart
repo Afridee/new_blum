@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -38,23 +39,27 @@ class AudioPlayerController extends GetxController{
 
   AnimationController playPauseAnimationController;
 
+  Icon Mini_play_pause = Icon(Icons.play_arrow);
+
   ///A function to change milliseconds into hh:mm:ss
   changeMillisecondsToTime(Duration d) => d.toString().split('.').first.padLeft(8, "0");
 
 
-
   ///playPauseToggle:
   playPauseToggle(){
-    AudioService.playbackState.playing ? AudioService.pause() : AudioService.play();
+    if(AudioService.running){
+      AudioService.playbackState.playing ? AudioService.pause() : AudioService.play();
+    }
   }
 
 
   ///function for changing drag percentage:
   changeDragPercantage(double current){
-    dragPercentage = current;
-    AudioService.seekTo(Duration(milliseconds: ((AudioService.currentMediaItem.duration.inMilliseconds/100)*current).toInt()));
-
-    update();
+     if(AudioService.running){
+       dragPercentage = current;
+       AudioService.seekTo(Duration(milliseconds: ((AudioService.currentMediaItem.duration.inMilliseconds/100)*current).toInt()));
+       update();
+     }
   }
 
 
@@ -64,9 +69,15 @@ class AudioPlayerController extends GetxController{
     playbackStateStream = AudioService.playbackStateStream.listen((state) {
       try {
         state.playing ? playPauseAnimationController.forward() : playPauseAnimationController.reverse();
-
       } catch (e) {
 
+      }
+
+      try {
+        state.playing ? Mini_play_pause = Icon(Icons.pause) : Mini_play_pause = Icon(Icons.play_arrow);
+        update();
+      } catch (e) {
+        print(e);
       }
     });
 
@@ -94,10 +105,10 @@ class AudioPlayerController extends GetxController{
         }else{
           dragPercentage = 100;
         }
-        update();
       } catch (e) {
 
       }
+      update();
     });
 
   }

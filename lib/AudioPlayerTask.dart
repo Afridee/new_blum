@@ -37,6 +37,10 @@ class Seeker {
 
 /// This task defines logic for playing a list of podcast episodes.
 class AudioPlayerTask extends BackgroundAudioTask {
+
+  ///initializing Audioplayer:
+  final AudioPlayer player = AudioPlayer();
+
   AudioProcessingState _skipState;
   Seeker _seeker;
   StreamSubscription<PlaybackEvent> _eventSubscription;
@@ -271,7 +275,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
       bufferedPosition: player.bufferedPosition,
       shuffleMode: _getShuffleMode(),
       speed: player.speed,
-      repeatMode: _getRepeatModeStat()
+      repeatMode: _getRepeatModeStat(),
     );
   }
 

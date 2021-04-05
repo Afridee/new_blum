@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:blum/Controllers/AudioPlayer.dart';
+import 'package:wave/config.dart';
+import 'package:wave/wave.dart';
 import '../../constants.dart';
 
 class AudioPlayer extends StatefulWidget {
@@ -281,40 +283,40 @@ class _AudioPlayerState extends State<AudioPlayer>
                       ? Container(
                           height: 60,
                           width: MediaQuery.of(context).size.width,
-//                          child: WaveWidget(
-//                            isLoop: true,
-//                            waveFrequency: 4,
-//                            config: CustomConfig(
-//                              gradients: [
-//                                [
-//                                  Color(0xff6F2CFF).withOpacity(0.07),
-//                                  Color(0xff6F2CFF).withOpacity(0.07)
-//                                ],
-//                                [
-//                                  Color(0xff6F2CFF).withOpacity(0.07),
-//                                  Color(0xff6F2CFF).withOpacity(0.07)
-//                                ],
-//                                [
-//                                  Color(0xff6F2CFF).withOpacity(0.07),
-//                                  Color(0xff6F2CFF).withOpacity(0.07)
-//                                ],
-//                                [
-//                                  Color(0xff6F2CFF).withOpacity(0.07),
-//                                  Color(0xff6F2CFF).withOpacity(0.07)
-//                                ]
-//                              ],
-//                              durations: [1000, 2000, 3000, 4000],
-//                              heightPercentages: [0.20, 0.23, 0.25, 0.30],
-//                              blur: MaskFilter.blur(BlurStyle.solid, 10),
-//                              gradientBegin: Alignment.bottomLeft,
-//                              gradientEnd: Alignment.topRight,
-//                            ),
-//                            waveAmplitude: 0,
-//                            size: Size(
-//                              double.infinity,
-//                              60,
-//                            ),
-//                          ),
+                         child: WaveWidget(
+                           isLoop: true,
+                           waveFrequency: 4,
+                           config: CustomConfig(
+                             gradients: [
+                               [
+                                 Color(0xff6F2CFF).withOpacity(0.07),
+                                 Color(0xff6F2CFF).withOpacity(0.07)
+                               ],
+                               [
+                                 Color(0xff6F2CFF).withOpacity(0.07),
+                                 Color(0xff6F2CFF).withOpacity(0.07)
+                               ],
+                               [
+                                 Color(0xff6F2CFF).withOpacity(0.07),
+                                 Color(0xff6F2CFF).withOpacity(0.07)
+                               ],
+                               [
+                                 Color(0xff6F2CFF).withOpacity(0.07),
+                                 Color(0xff6F2CFF).withOpacity(0.07)
+                               ]
+                             ],
+                             durations: [1000, 2000, 3000, 4000],
+                             heightPercentages: [0.20, 0.23, 0.25, 0.30],
+                             blur: MaskFilter.blur(BlurStyle.solid, 10),
+                             gradientBegin: Alignment.bottomLeft,
+                             gradientEnd: Alignment.topRight,
+                           ),
+                           waveAmplitude: 0,
+                           size: Size(
+                             double.infinity,
+                             60,
+                           ),
+                         ),
                         )
                       : Container(
                         height: 50,
