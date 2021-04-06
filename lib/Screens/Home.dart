@@ -18,8 +18,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home>{
   PageController pageController;
-  final AudioPlayerController audioPlayerController =
-      Get.put(AudioPlayerController());
+  final AudioPlayerController audioPlayerController = Get.put(AudioPlayerController());
 
   @override
   void initState() {
@@ -62,7 +61,7 @@ class _HomeState extends State<Home>{
         ),
         bottomNavigationBar:  GetBuilder<AudioPlayerController>(
           builder: (apc){
-           return apc.currentSong.title!=null ? Container(
+           return AudioService.running ? Container(
               color: Colors.white,
               height: 130,
               width: MediaQuery.of(context).size.width,

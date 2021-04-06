@@ -35,7 +35,7 @@ class AudioPlayerController extends GetxController{
   StreamSubscription currentMediaItemStream;
 
   ///the current song that is being played:
-  SongModelForPLayList currentSong = new SongModelForPLayList();
+  MediaItem currentSong = new MediaItem(id: '...', album: '...', title: '...');
 
   AnimationController playPauseAnimationController;
 
@@ -85,11 +85,7 @@ class AudioPlayerController extends GetxController{
     currentMediaItemStream = AudioService.currentMediaItemStream.listen((MediaItem item) {
       try {
         currentSongDuration = changeMillisecondsToTime(item.duration);
-        currentSongList.forEach((element) {
-                if(element.filePath==item.id){
-                  currentSong = element;
-                }
-              });
+        currentSong = item;
         update();
       } catch (e) {
 

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:blum/Controllers/AudioPlayer.dart';
+import 'package:hive/hive.dart';
 import 'package:wave/config.dart';
 import 'package:wave/wave.dart';
 import '../../constants.dart';
@@ -18,7 +19,8 @@ class AudioPlayer extends StatefulWidget {
 
 class _AudioPlayerState extends State<AudioPlayer>
     with SingleTickerProviderStateMixin {
-  final audioPlayerController = Get.put(AudioPlayerController());
+    final audioPlayerController = Get.put(AudioPlayerController());
+    final Box<String> AlbumArtworkBox = Hive.box<String>("AlbumArtworkBox");
 
   @override
   void initState() {
@@ -54,7 +56,7 @@ class _AudioPlayerState extends State<AudioPlayer>
               child: GetBuilder<AudioPlayerController>(
                 builder: (apc) {
                   return CachedNetworkImage(
-                      imageUrl: apc.currentSong.albumArtwork.toString(),
+                      imageUrl: AlbumArtworkBox.get(apc.currentSong.album),
                       fit: BoxFit.cover,
                       errorWidget: (context, url, error) => Image.asset(
                             'assets/images/image_1.jfif',
@@ -101,8 +103,7 @@ class _AudioPlayerState extends State<AudioPlayer>
                             child: GetBuilder<AudioPlayerController>(
                               builder: (apc) {
                                 return CachedNetworkImage(
-                                    imageUrl:
-                                        apc.currentSong.albumArtwork.toString(),
+                                    imageUrl: AlbumArtworkBox.get(apc.currentSong.album),
                                     fit: BoxFit.cover,
                                     errorWidget: (context, url, error) =>
                                         Image.asset(
