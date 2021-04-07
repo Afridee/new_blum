@@ -87,12 +87,4 @@ List<Widget> Tabs = [
       ),
     ),
   ),
-  Tab(
-    child: Container(
-      child: Text(
-        'Genres',
-        style: TextStyle(color: Colors.white, fontSize: 18.0),
-      ),
-    ),
-  ),
 ];

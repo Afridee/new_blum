@@ -9,7 +9,6 @@ import '../../Controllers/AudioPlayer.dart';
 import '../../Controllers/AudioQuerying.dart';
 import '../../Screens/AudioPlayer/AudioPlayer.dart';
 import '../../constants.dart';
-import '../../main.dart';
 
 class SongListTile extends StatelessWidget {
   final SongInfo songInfo;

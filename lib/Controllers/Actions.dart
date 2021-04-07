@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -8,6 +9,8 @@ class AppActions extends GetxController{
 
   Box<List<dynamic>> PlaylistBox = Hive.box<List<dynamic>>("PlaylistBox");
   Box<String> AlbumArtworkBox = Hive.box<String>("AlbumArtworkBox");
+  bool search = false;
+  double searchBarwidth = 50;
 
   addSongToPlayList({String playListname, List<SongInfo> songInfoList}){
 
@@ -80,4 +83,14 @@ class AppActions extends GetxController{
 
     PlaylistBox.put(playListname, Songs);
  }
+
+  searchStat(BuildContext context){
+    search = !search;
+    if(search){
+      searchBarwidth = MediaQuery.of(context).size.width;
+    }else{
+      searchBarwidth = 50;
+    }
+    update();
+  }
 }

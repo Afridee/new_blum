@@ -14,7 +14,7 @@ class _ArtistsState extends State<Artists> {
     return Container(
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
-      color: Color(0xff192462),
+      color: Color(0xff1f2128).withOpacity(0.9),
       child: Center(
         child: ArtistList(),
       ),
