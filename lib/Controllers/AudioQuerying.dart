@@ -84,6 +84,10 @@ class AudioQuerying extends GetxController {
     });
   }
 
+  Search(String query){
+
+  }
+
   changeMillisecondsToTime(Duration d) =>
       d.toString().split('.').first.padLeft(8, "0");
 }

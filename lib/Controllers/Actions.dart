@@ -4,11 +4,13 @@ import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import '../Models/songModelForPlaylist.dart';
+import 'AudioQuerying.dart';
 
 class AppActions extends GetxController{
 
   Box<List<dynamic>> PlaylistBox = Hive.box<List<dynamic>>("PlaylistBox");
   Box<String> AlbumArtworkBox = Hive.box<String>("AlbumArtworkBox");
+  AudioQuerying audioQuerying = Get.put(AudioQuerying());
   bool search = false;
   double searchBarwidth = 50;
 
