@@ -92,6 +92,7 @@ class AppActions extends GetxController{
       searchBarwidth = MediaQuery.of(context).size.width;
     }else{
       searchBarwidth = 50;
+      audioQuerying.Search('');
     }
     update();
   }

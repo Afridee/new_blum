@@ -17,6 +17,7 @@ class AudioQuerying extends GetxController {
   List<ArtistInfo> artists = new List<ArtistInfo>();
   List<GenreInfo> genreList = new List<GenreInfo>();
   List<AlbumInfo> albumList = [];
+  String query='';
 
   AudioQuerying() {
     initialize();
@@ -84,8 +85,16 @@ class AudioQuerying extends GetxController {
     });
   }
 
-  Search(String query){
+  Search(String query) async{
+    this.query = query;
+    update();
+  }
 
+  bool MatchQuery(String songTitle){
+    if(songTitle.toLowerCase().trim().contains(query.toLowerCase().trim()))
+      return true;
+    else
+      return false;
   }
 
   changeMillisecondsToTime(Duration d) =>

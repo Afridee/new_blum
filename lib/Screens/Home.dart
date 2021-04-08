@@ -25,7 +25,7 @@ class _HomeState extends State<Home> {
   final AudioPlayerController audioPlayerController = Get.put(AudioPlayerController());
   final AppActions actions = Get.put(AppActions());
   final Box<String> AlbumArtworkBox = Hive.box<String>("AlbumArtworkBox");
-
+  final AudioQuerying audioQuerying = Get.put(AudioQuerying());
 
   @override
   void initState() {
@@ -48,9 +48,16 @@ class _HomeState extends State<Home> {
       initialIndex: 0,
       length: 4,
       child: Scaffold(
-        drawer: Drawer(),
         backgroundColor: Color(0xff1f2128),
         appBar: AppBar(
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: IconButton(icon: Icon(Icons.equalizer_rounded, color: Colors.white, size: 35,), onPressed: (){
+                ///TODO: to equalizer
+              }),
+            )
+          ],
           centerTitle: false,
           title: GetBuilder<AppActions>(
             builder: (aaContext){
@@ -63,7 +70,7 @@ class _HomeState extends State<Home> {
                 ),
                 child: aaContext.search? TextField(
                   onChanged: (value){
-                    print(value);
+                    audioQuerying.Search(value);
                   },
                   style: TextStyle(
                       color: Colors.white
@@ -80,7 +87,7 @@ class _HomeState extends State<Home> {
                       )
                   ),
                 ) : IconButton(icon: Icon(Icons.search, color: Colors.white), onPressed: (){
-                  actions.searchStat(context);
+                    actions.searchStat(context);
                 }),
               );
             }
