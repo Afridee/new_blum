@@ -63,6 +63,10 @@ class AppActions extends GetxController{
 
   }
 
+  deletePlayList(String playListName){
+    PlaylistBox.delete(playListName);
+  }
+
   removeSongFromPlaylist({String playListname, List<SongModelForPLayList> songInfoList}){
 
     List<dynamic> Songs = PlaylistBox.get(playListname);

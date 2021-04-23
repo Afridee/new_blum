@@ -26,20 +26,35 @@ class AudioQuerying extends GetxController {
   initialize() async {
     audioQuery = FlutterAudioQuery();
 
-    /// getting all songs available on device storage
-    songs = await audioQuery.getSongs(sortType: SongSortType.DEFAULT);
+    try {
+      /// getting all songs available on device storage
+      songs = await audioQuery.getSongs(sortType: SongSortType.DEFAULT);
+    } catch (e) {
+      print(e);
+    }
 
-    /// getting all playlist available
-    playlist = await audioQuery.getPlaylists();
 
-    /// returns all artists available
-    artists = await audioQuery.getArtists();
+    try {
+      /// returns all artists available
+      artists = await audioQuery.getArtists();
+    } catch (e) {
+      print(e);
+    }
+
 
     /// getting all genres available
-    genreList = await audioQuery.getGenres();
+    try {
+      genreList = await audioQuery.getGenres();
+    } catch (e) {
+      print(e);
+    }
 
     /// getting all albums available on device storage
-    albumList = await audioQuery.getAlbums();
+    try {
+      albumList = await audioQuery.getAlbums();
+    } catch (e) {
+      print(e);
+    }
 
     update();
 
@@ -48,6 +63,29 @@ class AudioQuerying extends GetxController {
 
     update();
   }
+
+  getSongsByAlbum(String albumId) async{
+    try {
+      audioQuery = FlutterAudioQuery();
+      List<SongInfo> songs = this.songs.where((element) => element.albumId==albumId).toList();
+      return songs;
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
+  getSongsByArtists(String artistId) async{
+    try {
+      audioQuery = FlutterAudioQuery();
+      List<SongInfo> songs = this.songs.where((element) => element.artistId==artistId).toList();
+      return songs;
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
 
   initializeAlbumArtwork() {
     albumList.forEach((element) async {

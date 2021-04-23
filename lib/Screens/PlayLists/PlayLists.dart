@@ -18,24 +18,24 @@ class _PlayListsState extends State<PlayLists> {
       child: Column(
         children: [
           Expanded(
+            flex: 5,
+            child: Container(
+              child: Center(
+                child: ListOfPlayList(),
+              ),
+            ),
+          ),
+          Expanded(
             child: Container(
               child: Center(
                 child: IconButton(
-                  icon: Icon(Icons.add_circle),
+                  icon: Icon(Icons.add_circle, color: Color(0xff6F2CFF),),
                   iconSize: 70,
                   color: Colors.white,
                   onPressed: (){
                     PlayListCreatorDialog(context: context, title: "Create new playlist", color: Color(0xff192462));
                   },
                 ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 5,
-            child: Container(
-              child: Center(
-                child: ListOfPlayList(),
               ),
             ),
           ),

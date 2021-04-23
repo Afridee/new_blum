@@ -1,9 +1,11 @@
+import 'package:blum/Screens/Songs/SongList.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:blum/Screens/Artists/ArtistListTile.dart';
 import '../../Controllers/AudioQuerying.dart';
+import '../../Screens/SongsFromAlbumsOrArtists/songsFromAlbumOrArtist.dart';
 
 class ArtistList extends StatefulWidget {
   @override
@@ -14,11 +16,23 @@ class _ArtistListState extends State<ArtistList> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<AudioQuerying>(builder: (aq){
-      return ListView.builder(
-        itemCount: aq.artists.length,
-        itemBuilder: (context, index){
-           return ArtistListTile(artistInfo: aq.artists[index]);
-        },
+      return GridView.count(
+        crossAxisCount: 2,
+        children: List.generate(aq.artists.length, (index) {
+          return InkWell(child: ArtistListTile(artistInfo: aq.artists[index]),
+          onTap: () async{
+
+            final AudioQuerying audioQuerying = Get.put(AudioQuerying());
+            List<SongInfo> songs = await audioQuerying.getSongsByArtists(aq.artists[index].id);
+
+            var route = new MaterialPageRoute(
+              builder: (BuildContext context) =>
+              new SongsFromAlbumOrArtist(songs: songs),
+            );
+            Navigator.of(context).push(route);
+
+          },);
+        }),
       );
     });
   }
