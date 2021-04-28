@@ -44,7 +44,7 @@ class _ChooseSongsToAddState extends State<ChooseSongsToAdd> {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(25),
-                  color: Color(0xff6F2CFF),
+                  color: Colors.black,
                     boxShadow: [
                       BoxShadow(
                         color: Color(0xff6F2CFF).withOpacity(0.3),
