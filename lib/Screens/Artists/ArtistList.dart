@@ -30,7 +30,7 @@ class _ArtistListState extends State<ArtistList> {
 
             var route = new MaterialPageRoute(
               builder: (BuildContext context) =>
-              new SongsFromAlbumOrArtist(songs: songs, image: ArtistArtBox.get(aq.artists[index].name)),
+              new SongsFromAlbumOrArtist(title: aq.artists[index].name, songs: songs, image: ArtistArtBox.get(aq.artists[index].name)),
             );
             Navigator.of(context).push(route);
 

@@ -59,7 +59,11 @@ class _ChooseSongsToAddState extends State<ChooseSongsToAdd> {
                   child: Padding(
                     padding: const EdgeInsets.only(top: 20.0,left: 15, right: 15),
                     child: TextField(
+                      style: TextStyle(
+                        color: Colors.white
+                      ),
                       decoration: InputDecoration(
+                        border: InputBorder.none,
                         hintText: "Search here for songs...",
                         hintStyle: TextStyle(
                           color: Colors.white

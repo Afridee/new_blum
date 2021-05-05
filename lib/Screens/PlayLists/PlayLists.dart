@@ -33,7 +33,7 @@ class _PlayListsState extends State<PlayLists> {
                   iconSize: 70,
                   color: Colors.white,
                   onPressed: (){
-                    PlayListCreatorDialog(context: context, title: "Create new playlist", color: Color(0xff192462));
+                    PlayListCreatorDialog(context: context, title: "Create new playlist", color: Color(0xff6F2CFF));
                   },
                 ),
               ),

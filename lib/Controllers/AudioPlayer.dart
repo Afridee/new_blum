@@ -167,6 +167,82 @@ class AudioPlayerController extends GetxController{
 
   }
 
+  ///Sets Audio source(for Albums_and_Artists):
+  setAudioSourceForAlbums_and_Artists({@required List<SongInfo> songList, @required int index}) async{
+
+    currentSongList.clear();
+
+    final Box<String> AlbumArtworkBox = Hive.box<String>("AlbumArtworkBox");
+
+    songList.forEach((songInfo) {
+      if(songInfo.duration!=null){
+        currentSongList.add(
+            SongModelForPLayList(
+                album: songInfo.album,
+                albumArtwork: AlbumArtworkBox.get(songInfo.album),
+                title: songInfo.title,
+                artist: songInfo.artist,
+                duration: songInfo.duration,
+                composer: songInfo.composer,
+                albumId: songInfo.albumId,
+                artistId: songInfo.artistId,
+                filePath: songInfo.filePath,
+                fileSize: songInfo.fileSize,
+                isMusic: songInfo.isMusic
+            )
+        );
+      }
+    });
+
+    update();
+
+    bool mediasAreStillSame = true;
+
+
+    if(AudioService.running && AudioService.queue.length==currentSongList.length){
+      for(int i=0;i<AudioService.queue.length;i++){
+        if(AudioService.queue[i].id != currentSongList[i].filePath){
+          mediasAreStillSame = false;
+        }
+      }
+    }else{
+      mediasAreStillSame = false;
+    }
+
+    if(mediasAreStillSame){
+      AudioService.skipToQueueItem(currentSongList[index].filePath);
+    }else{
+
+      List playThese = [];
+
+      currentSongList.forEach((element) {
+        playThese.add({
+          'id': element.filePath,
+          'album': element.album,
+          'title': element.title,
+          'artist': element.artist,
+          'duration': int.parse(element.duration),
+        });
+      });
+
+      if(AudioService.running){
+        await AudioService.stop();
+      }
+
+      AudioService.start(
+        params: {'data': playThese, 'startFromIndex' : index},
+        backgroundTaskEntrypoint: audioPlayerTaskEntrypoint,
+        androidNotificationChannelName: 'Audio Service Demo',
+        // Enable this if you want the Android service to exit the foreground state on pause.
+        //androidStopForegroundOnPause: true,
+        androidNotificationColor: 0xFF2196f3,
+        androidNotificationIcon: 'mipmap/ic_launcher',
+        androidEnableQueue: true,
+      );
+    }
+
+  }
+
   ///Sets Audio source(for songs):
   setAudioSourceForSongs({SongInfo song}) async{
 
