@@ -9,7 +9,6 @@ class ChooseSongsToAdd extends StatefulWidget {
 
   final String playListName;
 
-
   ChooseSongsToAdd({Key key,@required this.playListName}) : super(key: key);
 
   @override
@@ -18,7 +17,6 @@ class ChooseSongsToAdd extends StatefulWidget {
 
 class _ChooseSongsToAddState extends State<ChooseSongsToAdd> {
   AudioQuerying audioQuerying = Get.put(AudioQuerying());
-
   AppActions appActions = Get.put(AppActions());
 
   ChooseSongsForPlaylistController chooseSongsForPlaylistController = Get.put(ChooseSongsForPlaylistController());
@@ -59,6 +57,9 @@ class _ChooseSongsToAddState extends State<ChooseSongsToAdd> {
                   child: Padding(
                     padding: const EdgeInsets.only(top: 20.0,left: 15, right: 15),
                     child: TextField(
+                      onChanged: (value){
+                        audioQuerying.searchSongsToAddToPlaylist(value);
+                      },
                       style: TextStyle(
                         color: Colors.white
                       ),
@@ -82,7 +83,7 @@ class _ChooseSongsToAddState extends State<ChooseSongsToAdd> {
                   return ListView.builder(
                     itemCount: aq.songs.length,
                     itemBuilder: (context, index){
-                      return aq.songs[index].isMusic && aq.songs[index].duration!=null ?  ChooseSongsToAdd_ListTile(songInfo : aq.songs[index]) : Container();
+                      return aq.songs[index].isMusic && aq.songs[index].duration!=null && aq.MatchQueryWhileAddingSongsToPlaylist(aq.songs[index].title) ?  ChooseSongsToAdd_ListTile(songInfo : aq.songs[index]) : Container();
                     },
                   );
                 }
@@ -96,6 +97,7 @@ class _ChooseSongsToAddState extends State<ChooseSongsToAdd> {
         backgroundColor: Color(0xff6F2CFF),
         child: Icon(Icons.done, color: Colors.white,),
         onPressed: (){
+           audioQuerying.searchSongsToAddToPlaylist('');
            appActions.addSongToPlayList(playListname: widget.playListName, songInfoList: chooseSongsForPlaylistController.selected);
            Navigator.of(context).pop();
         },

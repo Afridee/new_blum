@@ -18,6 +18,7 @@ class AudioQuerying extends GetxController {
   List<GenreInfo> genreList = new List<GenreInfo>();
   List<AlbumInfo> albumList = [];
   String query='';
+  String queryWhileAddingSongsToPlaylist='';
 
   AudioQuerying() {
     initialize();
@@ -128,8 +129,20 @@ class AudioQuerying extends GetxController {
     update();
   }
 
+  searchSongsToAddToPlaylist(String query){
+     this.queryWhileAddingSongsToPlaylist = query;
+     update();
+  }
+
   bool MatchQuery(String songTitle){
     if(songTitle.toLowerCase().trim().contains(query.toLowerCase().trim()))
+      return true;
+    else
+      return false;
+  }
+
+  bool MatchQueryWhileAddingSongsToPlaylist(String songTitle){
+    if(songTitle.toLowerCase().trim().contains(queryWhileAddingSongsToPlaylist.toLowerCase().trim()))
       return true;
     else
       return false;
