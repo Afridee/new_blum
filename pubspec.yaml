@@ -41,6 +41,8 @@ dependencies:
   get_storage: ^2.0.1
   wave: ^0.2.0
   shadowed_image: ^1.0.3
+  equalizer: ^0.0.2+2
+  flutter_xlider: ^3.4.0
 
 dev_dependencies:
   flutter_test:

@@ -15,6 +15,8 @@ import '../Screens/Songs/Songs.dart';
 import '../constants.dart';
 import 'package:audio_service/audio_service.dart';
 
+import '../Equalizer.dart';
+
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
@@ -54,7 +56,10 @@ class _HomeState extends State<Home> {
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: IconButton(icon: Icon(Icons.equalizer_rounded, color: Colors.white, size: 35,), onPressed: (){
-                ///TODO: to equalizer
+                var route = new MaterialPageRoute(
+                  builder: (BuildContext context) => new Eqlzr(),
+                );
+                Navigator.of(context).push(route);
               }),
             )
           ],
