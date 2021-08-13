@@ -39,7 +39,8 @@ class _CustomEQState extends State<CustomEQ> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: snapshot.data
-                        .map((freq) => _buildSliderBand(freq, bandId++))
+                        .map((freq) =>
+                            Expanded(child: _buildSliderBand(freq, bandId++)))
                         .toList(),
                   ),
                   Divider(),
@@ -148,10 +149,10 @@ class _CustomEQState extends State<CustomEQ> {
               dropdownColor: Color(0xff1f2128).withOpacity(0.9),
               isExpanded: true,
               icon: Icon(
-                CupertinoIcons.chevron_down_circle,
+                CupertinoIcons.sort_down,
               ),
               decoration: InputDecoration(
-                contentPadding: EdgeInsets.all(8.0),
+                contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
                 labelText: 'Available Presets',
                 labelStyle: TextStyle(color: Colors.white),
                 disabledBorder: OutlineInputBorder(
