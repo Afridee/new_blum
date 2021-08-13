@@ -26,46 +26,49 @@ class AlbumModel {
 
 class Album {
   Album({
-    this.artist,
-    this.mbid,
-    this.url,
-    this.image,
     this.listeners,
     this.playcount,
     this.tracks,
+    this.image,
     this.tags,
+    this.url,
+    this.artist,
+    this.name,
+    this.mbid,
   });
 
-
-  ArtistEnum artist;
-  String mbid;
-  String url;
-  List<Image> image;
   String listeners;
   String playcount;
   Tracks tracks;
+  List<Image> image;
   Tags tags;
+  String url;
+  ArtistEnum artist;
+  String name;
+  String mbid;
 
   factory Album.fromJson(Map<String, dynamic> json) => Album(
-    artist: artistEnumValues.map[json["artist"]],
-    mbid: json["mbid"],
-    url: json["url"],
-    image: List<Image>.from(json["image"].map((x) => Image.fromJson(x))),
     listeners: json["listeners"],
     playcount: json["playcount"],
     tracks: Tracks.fromJson(json["tracks"]),
+    image: List<Image>.from(json["image"].map((x) => Image.fromJson(x))),
     tags: Tags.fromJson(json["tags"]),
+    url: json["url"],
+    artist: artistEnumValues.map[json["artist"]],
+    name: json["name"],
+    mbid: json["mbid"],
   );
 
   Map<String, dynamic> toJson() => {
-    "artist": artistEnumValues.reverse[artist],
-    "mbid": mbid,
-    "url": url,
-    "image": List<dynamic>.from(image.map((x) => x.toJson())),
     "listeners": listeners,
     "playcount": playcount,
     "tracks": tracks.toJson(),
+    "image": List<dynamic>.from(image.map((x) => x.toJson())),
     "tags": tags.toJson(),
+    "url": url,
+    "artist": artistEnumValues.reverse[artist],
+    "name": name,
+    "mbid": mbid,
   };
 }
 
@@ -77,21 +80,21 @@ final artistEnumValues = EnumValues({
 
 class Image {
   Image({
-    this.text,
     this.size,
+    this.text,
   });
 
-  String text;
   String size;
+  String text;
 
   factory Image.fromJson(Map<String, dynamic> json) => Image(
-    text: json["#text"],
     size: json["size"],
+    text: json["#text"],
   );
 
   Map<String, dynamic> toJson() => {
-    "#text": text,
     "size": size,
+    "#text": text,
   };
 }
 
@@ -149,61 +152,61 @@ class Tracks {
 
 class Track {
   Track({
-    this.name,
-    this.url,
-    this.duration,
-    this.attr,
-    this.streamable,
     this.artist,
+    this.attr,
+    this.duration,
+    this.url,
+    this.name,
+    this.streamable,
   });
 
-  String name;
-  String url;
-  String duration;
-  Attr attr;
-  Streamable streamable;
   ArtistClass artist;
+  Attr attr;
+  int duration;
+  String url;
+  String name;
+  Streamable streamable;
 
   factory Track.fromJson(Map<String, dynamic> json) => Track(
-    name: json["name"],
-    url: json["url"],
-    duration: json["duration"],
-    attr: Attr.fromJson(json["@attr"]),
-    streamable: Streamable.fromJson(json["streamable"]),
     artist: ArtistClass.fromJson(json["artist"]),
+    attr: Attr.fromJson(json["@attr"]),
+    duration: json["duration"],
+    url: json["url"],
+    name: json["name"],
+    streamable: Streamable.fromJson(json["streamable"]),
   );
 
   Map<String, dynamic> toJson() => {
-    "name": name,
-    "url": url,
-    "duration": duration,
-    "@attr": attr.toJson(),
-    "streamable": streamable.toJson(),
     "artist": artist.toJson(),
+    "@attr": attr.toJson(),
+    "duration": duration,
+    "url": url,
+    "name": name,
+    "streamable": streamable.toJson(),
   };
 }
 
 class ArtistClass {
   ArtistClass({
+    this.url,
     this.name,
     this.mbid,
-    this.url,
   });
 
+  String url;
   ArtistEnum name;
   String mbid;
-  String url;
 
   factory ArtistClass.fromJson(Map<String, dynamic> json) => ArtistClass(
+    url: json["url"],
     name: artistEnumValues.map[json["name"]],
     mbid: json["mbid"],
-    url: json["url"],
   );
 
   Map<String, dynamic> toJson() => {
+    "url": url,
     "name": artistEnumValues.reverse[name],
     "mbid": mbid,
-    "url": url,
   };
 }
 
@@ -212,7 +215,7 @@ class Attr {
     this.rank,
   });
 
-  String rank;
+  int rank;
 
   factory Attr.fromJson(Map<String, dynamic> json) => Attr(
     rank: json["rank"],
@@ -225,23 +228,25 @@ class Attr {
 
 class Streamable {
   Streamable({
-    this.text,
     this.fulltrack,
+    this.text,
   });
 
-  String text;
   String fulltrack;
+  String text;
 
   factory Streamable.fromJson(Map<String, dynamic> json) => Streamable(
-    text: json["#text"],
     fulltrack: json["fulltrack"],
+    text: json["#text"],
   );
 
   Map<String, dynamic> toJson() => {
-    "#text": text,
     "fulltrack": fulltrack,
+    "#text": text,
   };
 }
+
+
 
 class EnumValues<T> {
   Map<String, T> map;

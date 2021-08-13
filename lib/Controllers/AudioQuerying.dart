@@ -102,6 +102,7 @@ class AudioQuerying extends GetxController {
           "format": "json"
         }));
 
+
         try {
           if (jsonDecode(response.body)['message'] != "Album not found") {
             try {
@@ -111,13 +112,14 @@ class AudioQuerying extends GetxController {
             } catch (e) {
               print('Error: ' + e.toString());
             }
-          } else {
+          } else if(jsonDecode(response.body)['message'] == "Album not found"){
             AlbumArtworkBox.put(element.title,
                 'https://images.unsplash.com/photo-1458560871784-56d23406c091?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');
             ArtistArtBox.put(element.artist,
                 'https://images.unsplash.com/photo-1458560871784-56d23406c091?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');
           }
         } catch (e) {
+          print("Something Wrong:");
           print(e);
         }
       }

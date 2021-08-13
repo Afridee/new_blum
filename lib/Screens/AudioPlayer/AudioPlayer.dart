@@ -55,8 +55,9 @@ class _AudioPlayerState extends State<AudioPlayer>
               width: MediaQuery.of(context).size.width,
               child: GetBuilder<AudioPlayerController>(
                 builder: (apc) {
+                  //print(AlbumArtworkBox.get(apc.currentSong.album));
                   return CachedNetworkImage(
-                      imageUrl: AlbumArtworkBox.get(apc.currentSong.album),
+                      imageUrl: AlbumArtworkBox.get(apc.currentSong.album) ?? "https://images.unsplash.com/photo-1458560871784-56d23406c091?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
                       fit: BoxFit.cover,
                       errorWidget: (context, url, error) => Image.asset(
                             'assets/images/image_1.jfif',
@@ -103,7 +104,7 @@ class _AudioPlayerState extends State<AudioPlayer>
                             child: GetBuilder<AudioPlayerController>(
                               builder: (apc) {
                                 return CachedNetworkImage(
-                                    imageUrl: AlbumArtworkBox.get(apc.currentSong.album),
+                                    imageUrl: AlbumArtworkBox.get(apc.currentSong.album) ?? "https://images.unsplash.com/photo-1458560871784-56d23406c091?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
                                     fit: BoxFit.cover,
                                     errorWidget: (context, url, error) =>
                                         Image.asset(
