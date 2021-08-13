@@ -43,6 +43,8 @@ dependencies:
   shadowed_image: ^1.0.3
   equalizer: ^0.0.2+2
   flutter_xlider: ^3.4.0
+  flutter_native_splash: ^1.2.1
+  flutter_svg: ^0.21.0-nullsafety.0
 
 dev_dependencies:
   flutter_test:
